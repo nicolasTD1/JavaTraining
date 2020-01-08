@@ -8,8 +8,8 @@ import com.talos.javatraining.lesson9.factories.CommandFactory;
 import com.talos.javatraining.lesson9.factories.impl.CommandFactoryImpl;
 import com.talos.javatraining.lesson9.strategies.Calculator;
 import com.talos.javatraining.lesson9.strategies.CalculatorStrategy;
-import com.talos.javatraining.lesson9.strategies.impl.BasicStrategy;
-import com.talos.javatraining.lesson9.strategies.impl.ScientificStrategy;
+//import com.talos.javatraining.lesson9.strategies.impl.BasicStrategy;
+//import com.talos.javatraining.lesson9.strategies.impl.ScientificStrategy;
 
 
 public class AppModule extends AbstractModule
@@ -22,7 +22,7 @@ public class AppModule extends AbstractModule
 		bind(CommandFactory.class).to(CommandFactoryImpl.class).asEagerSingleton();
 
 		Multibinder<CalculatorStrategy> strategies = Multibinder.newSetBinder(binder(), CalculatorStrategy.class);
-		strategies.addBinding().to(BasicStrategy.class).asEagerSingleton();
-		strategies.addBinding().to(ScientificStrategy.class).asEagerSingleton();
+		//strategies.addBinding().to(BasicStrategy.class).asEagerSingleton();
+		//strategies.addBinding().to(ScientificStrategy.class).asEagerSingleton();
 	}
 }

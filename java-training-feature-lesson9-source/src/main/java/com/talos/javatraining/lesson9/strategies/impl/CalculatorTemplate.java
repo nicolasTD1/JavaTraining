@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 
-public abstract class CalculatorTemplate implements CalculatorStrategy
+public class CalculatorTemplate implements CalculatorStrategy
 {
 	private static final MathContext CONTEXT = MathContext.DECIMAL128;
 
@@ -35,7 +35,7 @@ public abstract class CalculatorTemplate implements CalculatorStrategy
 		return process(a, b, BigDecimal::divide);
 	}
 
-	protected abstract String convertToString(BigDecimal value);
+	protected String convertToString(BigDecimal value) { return null; }
 
 	private String process(String a, String b, ProcessCalculation operation)
 	{

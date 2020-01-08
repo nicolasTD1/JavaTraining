@@ -18,8 +18,7 @@ public interface Main
 	/**
 	 * Returns the full name if possible, otherwise a blank
 	 * @param addressModel the address model or null
-	 * @return the full name o
-	 * r a blank if was not possible
+	 * @return the full name or a blank if was not possible
 	 */
 	String getFullName(AddressModel addressModel);
 

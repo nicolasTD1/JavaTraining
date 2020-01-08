@@ -1,11 +1,17 @@
 package com.talos.javatraining.lesson9.factories.impl;
 
+import com.google.common.base.Supplier;
+import com.talos.javatraining.lesson9.AppModule;
+import com.talos.javatraining.lesson9.ExitException;
 import com.talos.javatraining.lesson9.commands.AppCommand;
 import com.talos.javatraining.lesson9.commands.impl.*;
 import com.talos.javatraining.lesson9.events.EventBus;
+import com.talos.javatraining.lesson9.events.EventType;
 import com.talos.javatraining.lesson9.factories.CommandFactory;
 
 import javax.inject.Inject;
+//import javax.swing.event.DocumentEvent.EventType;
+
 import java.util.Optional;
 
 
@@ -21,6 +27,9 @@ public class CommandFactoryImpl implements CommandFactory
 	@Inject
 	private EventBus eventBus;
 
+	public AppCommand tirar_excepcion() {
+	   throw new ExitException();
+	}
 
 	@Override
 	public Optional<AppCommand> createCommand(String line)
@@ -29,10 +38,10 @@ public class CommandFactoryImpl implements CommandFactory
 		Optional<AppCommand> result;
 		int size = parts.length;
 		if(size == 1 && EXIT.equals(parts[0])){
-			result = Optional.of(new ExitCommand());
+			result = Optional.of( this.tirar_excepcion() );
 		} else if (size == 2 && MODE.equals(parts[0]))
 		{
-			result = Optional.of(new ChangeModeCommand(eventBus, parts[1]));
+			result = Optional.of(new CommandTemplate(eventBus, EventType.CHANGE_MODE, parts[1]));
 		}
 		else if (size == 3)
 		{
@@ -40,16 +49,16 @@ public class CommandFactoryImpl implements CommandFactory
 			switch (parts[1])
 			{
 				case ADD:
-					command = new AddCommand(eventBus, parts[0], parts[2]);
+					command = new CommandTemplate(eventBus,EventType.ADD, parts[0], parts[2]);
 					break;
 				case SUBTRACT:
-					command = new SubtractCommand(eventBus, parts[0], parts[2]);
+					command = new CommandTemplate(eventBus,EventType.SUBTRACT, parts[0], parts[2]);
 					break;
 				case MULTIPLY:
-					command = new MultiplyCommand(eventBus, parts[0], parts[2]);
+					command = new CommandTemplate(eventBus,EventType.MULTIPLY, parts[0], parts[2]);
 					break;
 				case DIVIDE:
-					command = new DivideCommand(eventBus, parts[0], parts[2]);
+					command = new CommandTemplate(eventBus,EventType.DIVIDE, parts[0], parts[2]);
 					break;
 			}
 			result = Optional.ofNullable(command);

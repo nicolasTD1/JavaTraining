@@ -7,6 +7,11 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.mutable.MutableObject;
 
+//normal -> 8.532 segundos
+
+//primera conversion -> 8.083
+//segunda conversion -> 5.837
+//tercera conversion -> 5.198
 
 public class MainImpl implements Main
 {
@@ -15,8 +20,10 @@ public class MainImpl implements Main
 	{
 		MutableObject<BigDecimal> mutableAccumulator = new MutableObject<>(BigDecimal.ZERO);
 
-		stream.map(BigDecimal::new).forEach(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
-
+		//stream.parallel().map(BigDecimal::new).forEach(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
+		
+		stream.parallel().map(BigDecimal::new).forEachOrdered(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
+	
 		return mutableAccumulator.getValue();
 	}
 
@@ -24,9 +31,8 @@ public class MainImpl implements Main
 	public BigDecimal sumIf(Stream<String> stream, Predicate<BigDecimal> predicate)
 	{
 		MutableObject<BigDecimal> mutableAccumulator = new MutableObject<>(BigDecimal.ZERO);
-		stream.map(BigDecimal::new).filter(predicate)
-				.forEach(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
-
+		//stream.map(BigDecimal::new).filter(predicate).forEach(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
+		stream.parallel().map(BigDecimal::new).filter(predicate).forEachOrdered(v -> mutableAccumulator.setValue(mutableAccumulator.getValue().add(v)));
 		return mutableAccumulator.getValue();
 	}
 
@@ -34,13 +40,22 @@ public class MainImpl implements Main
 	public Map<Long, BigDecimal> sumsByRange(Stream<String> stream)
 	{
 		Map<Long, BigDecimal> result = new HashMap<>();
-		stream.map(BigDecimal::new).forEach(e -> result.compute(getRange(e), (k, v) -> {
+		/*stream.map(BigDecimal::new).forEach(e -> result.compute(getRange(e), (k, v) -> {
+			if (v == null)
+			{
+				v = BigDecimal.ZERO;
+			}
+			return v.add(e);
+		}));*/
+		
+		stream.parallel().map(BigDecimal::new).forEachOrdered(e -> result.compute(getRange(e), (k, v) -> {
 			if (v == null)
 			{
 				v = BigDecimal.ZERO;
 			}
 			return v.add(e);
 		}));
+		
 		return result;
 	}
 

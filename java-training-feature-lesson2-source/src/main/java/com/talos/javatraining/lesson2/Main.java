@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.apache.commons.lang3.StringUtils.CR;
@@ -32,7 +33,7 @@ public class Main
 		}
 
 		// TODO change this annonymous inner class expression to a lambda expression
-		printer = new Printer<String>()
+		/*printer = new Printer<String>()
 		{
 			@Override
 			public void print(Measure<String> measure, Writer writer) throws IOException
@@ -45,6 +46,16 @@ public class Main
 				printValue(() -> measure.getPressure(), "Pressure", writer);
 				printValue(() -> measure.getTemperature(), "Temperature", writer);
 			}
+		};*/
+		
+		printer = (Measure<String> measure, Writer writer) -> {
+			writer.write("---" + LF + CR);
+			writer.write("Station " + measure.getStationId() + LF + CR + LF + CR);
+			// TODO change these lambdas to method reference
+			printValue(measure::getHumidity, "Humidity", writer);
+			printValue(measure::getWindSpeed, "Wind speed", writer);
+			printValue(measure::getPressure, "Pressure", writer);
+			printValue(measure::getTemperature, "Temperature", writer);
 		};
 	}
 
@@ -73,6 +84,8 @@ public class Main
 	{
 		writer.write(label + " : " + getter.get() + LF + CR);
 	}
+	
+	
 
 	protected Measure<String> makeItReadable(Measure<BigDecimal> measure)
 	{
@@ -84,13 +97,20 @@ public class Main
 		 * You would call the makeItReadable method from that method
 		 * Eg: myMethod(measure::getHumidity, result::setHumidity, "unit")
 		 */
-		result.setWindSpeed(makeItReadable(measure.getWindSpeed(), "mph"));
-		result.setTemperature(makeItReadable(measure.getTemperature(), "°C"));
-		result.setPressure(makeItReadable(measure.getPressure(), "pa"));
-		result.setHumidity(makeItReadable(measure.getHumidity(), "%"));
+		
+		//result.setWindSpeed(makeItReadable(measure.getWindSpeed(), "mph"));
+		//result.setTemperature(makeItReadable(measure.getTemperature(), "°C"));
+		//result.setPressure(makeItReadable(measure.getPressure(), "pa"));
+		//result.setHumidity(makeItReadable(measure.getHumidity(), "%"));
+		
+		myMethod(measure::getWindSpeed, result::setWindSpeed, "mph");
+		myMethod(measure::getTemperature, result::setTemperature, "°C");
+		myMethod(measure::getPressure, result::setPressure, "pa");
+		myMethod(measure::getHumidity, result::setHumidity, "%");
 		return result;
 	}
 
-
-
+	private void myMethod(Supplier<BigDecimal> measure, Consumer<String> result, String string) {
+		result.accept(makeItReadable(measure.get(), string));
+	}
 }
